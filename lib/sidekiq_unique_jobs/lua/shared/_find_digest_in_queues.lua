@@ -6,7 +6,7 @@ local function find_digest_in_queues(digest)
 
   repeat
     log_debug("searching all queues for a matching digest:", digest)
-    local pagination  = redis.call("SCAN", cursor, "MATCH", "*queue:*", "COUNT", count)
+    local pagination  = redis.call("SCAN", cursor, "MATCH", "queue:*", "COUNT", count)
     local next_cursor = pagination[1]
     local queues      = pagination[2]
 
@@ -34,11 +34,10 @@ local function find_digest_in_queues(digest)
         end
         index = index + per
       end
-
-      cursor = next_cursor
-      if cursor == "0" then
-        log_debug("Looped through all queues, stopping iteration")
-      end
+    end
+    cursor = next_cursor
+    if cursor == "0" then
+      log_debug("Looped through all queues, stopping iteration")
     end
   until found == true or cursor == "0"
 

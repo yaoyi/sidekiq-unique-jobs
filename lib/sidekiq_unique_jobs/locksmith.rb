@@ -127,6 +127,10 @@ module SidekiqUniqueJobs
       redis { |rcon| taken?(rcon) }
     end
 
+    def set_pttl(pttl)
+      call_script(:set_pttl, key.to_a, [job_id, pttl, config.type, config.limit])
+    end
+
     #
     # Nicely formatted string with information about self
     #
